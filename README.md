@@ -43,7 +43,7 @@ git init
 
 ## git clone [Documentation](http://git-scm.com/docs/git-clone "Git Clone Documentation")
 
-Copy an existing repository, [name] is optional, will name local repository this instead.
+Copy an existing repository, [name] is optional, will name local repository this instead. `git clone` will set up a server remote named origin with a branch named master that automatically tracks the remote branch.
 
 ```
 git clone [url] [name]
@@ -142,37 +142,139 @@ git add [new_file_name]
 
 ## git commit [Documentation](http://git-scm.com/docs/git-commit "Git Commit Documentation")
 
-Records the staged changes to the local repository. This will launch the text editor that was configured in the `git config core.editor` command with comments of the latest git status command in it. Add your message under the comments or just delete them and it will be saved and commited after the editor is closed.
+Records the staged changes to the local repository. This will launch the text editor that was configured in the `git config core.editor` command with comments of the latest git status command in it. Add your message under the comments or just delete them and it will be saved and commited after the editor is closed. Adding `-v` will put the diff of your changes in the editor as well. Adding `-m ""` will allow you to do an inline message and skip opening up the editor. Will instantly commit when this command runs.
 
 ```
 git commit
-```
-Adding `-v` will put the diff of your changes in the editor as well.
-
-```
 git commit -v
-```
-
-Adding `-m ""` will allow you to do an inline message and skip opening up the editor. Will instantly commit when this command runs.
-
-```
 git commit -m "Whatever you want the commit message to be goes here."
 ```
 
-You can skip staging by adding `-a` to the commit. This will stage every file that is being tracked into the commit for you. By using `-a` and `-m` you can do quicker commits.
+You can skip staging by adding `-a` to the commit. This will stage every file that is being tracked into the commit for you. By using `-a` and `-m` you can do quicker commits. After the commit was successful it will show the branch commited to, the SHA-1 id, how many files were changed, and stats on the lines added and removed.
 
 ```
 git commit -a -m "This is my commit message."
 ```
 
-After the commit was successful it will show the branch commited to, the SHA-1 id, how many files were changed, and stats on the lines added and removed.
+If you want to change the commit message or forgot to stage a file to the last commit, `--amend`. If you made no changes since the commit, it will just open up the editor and let you overwrite the commit message. 
+
+```
+// Example from Git docs
+
+$ git commit -m 'initial commit'
+$ git add forgotten_file
+$ git commit --amend
+```
 
 ## git push [Documentation](http://git-scm.com/docs/git-push "Git Push Documentation")
 
+To send changes to the remote is where `git push` comes in. This only works if you have write access and if no one has pushed before you. If someone has pushed before you then your push will be rejected. You will have to pull down their work and merge it into yours before you can push to the remote. To push tags to remote servers you can run `git push [remote-name] [tagname]` or to push all tags that aren't already on the remote server you can do `--tags` instead.
+
+```
+git push [remote-name] [branch-name]
+git push [remote-name] [tagname]
+git push [remote-name] --tags
+
+Example of pushing to the master branch of your origin server (git clone sets this up for you automatically)
+git push origin master
+```
+
 ## git log [Documentation](http://git-scm.com/docs/git-log "Git Log Documentation")
 
-This pulls up the existing commit history for the current repository from newest to oldest.
+This pulls up the existing commit history for the current repository from newest to oldest. Adding `-p` will show the diff for each commit. Adding `--word-diff` after `-p` will take out the added and removed lines and shows changes inline instead. `--stat` will give a short summary of stats for each commit. `--graph` will show an ASCII graph of your branch and merge history on the left side. Using `--pretty` with `oneline`, `short`, `full`, or `fuller` will display the output differently with more or less information. `--pretty` can also be passed `format:"Make up a format here."` to display whatever you want. Options for `format` and other options for `git log` can be found in the documentation, there are quite a few.
 
 ```
-git log
+git log -p -3
+git log -p --word-diff
+git log --stat
+git log --pretty=format:"%h - %an, %ar : %s"
+git log -3 --pretty=oneline --graph
 ```
+
+There are also options to limit and filter `git log`. Adding `-(n)` will pull the last `(n)` commits only where `(n)` is some number. `--since`, `--before` to limit the commits to those made after the specified date. `--until`, `--before` to limit the commits to those made before the specified date. Plus many more in the Git docs.
+
+```
+git log --pretty=format:"%h - %an, %ar : %s" --author=lkosch --since="2013-11-01" --before="2013-12-01"
+```
+
+Running `gitk` opens a GUI that is a visual `git log`.
+
+```
+gitk
+```
+
+## git reset [Documentation](http://git-scm.com/docs/git-reset "Git Reset Documentation")
+
+To unstage a file use `git reset HEAD [file]`.
+
+```
+git reset HEAD README.md
+```
+
+## git checkout [Documentation](http://git-scm.com/docs/git-checkout "Git Checkout Documentation")
+
+If you want to overwrite a modified file with say a last commited version you can use `git checkout`. Any uncommited changes will be lost forever you use this command. This overwrites the file with the one you are checking out. If misused you could lose data that you can not recover.
+
+```
+git checkout -- README.md
+```
+
+## git remote [Documentation](http://git-scm.com/docs/git-remote "Git Remote Documentation")
+
+`git remote` will show a list of shortnames for each remote you've specified. Adding `-v` will show the URL that Git stored. `git remote add` allows you to add a new remote Git repository with a shortname. Adding `show` will display information about a specific remote. Will show branches and where `git pull` and `git push` will go for branches. Using `git remote rename` changes the shorthand for a remotes. This also changes remote branch names too, `[old-name]/master` to `[new-name]/master`. To remove a remote just use `git remote rm`.
+
+```
+git remote -v
+git remote add [shortname] [url]
+git remote show [remote-name]
+git remote rename [old-name] [new-name]
+git remote rm [remote-name]
+```
+
+## git fetch [Documentation](http://git-scm.com/docs/git-fetch "Git Fetch Documentation")
+
+Using `git fetch` will grab any new data from the remote since you cloned or last fetched. This does not automatically merge that data though.
+
+```
+git fetch [remote-name]
+```
+
+## git pull [Documentation](http://git-scm.com/docs/git-pull "Git Pull Documentation")
+
+If a branch is set up to track a remote branch then using `git pull` will grab any new data from the remote since you cloned or last fetched and try to merge this data with your current branch.
+
+```
+git pull [remote-name]
+```
+
+## git tag [Documentation](http://git-scm.com/docs/git-tag "Git Tag Documentation")
+
+Running `git tag` will list available tags. This can be used to search for tags with a pattern. Create annotated tages (recommended) by adding `-a`. You can also throw `-m` to add a message to the tag. If you don't then Git will open up your editor to create a message with. Can use `git show` to see tag data with the commit data the tag was used on. Can also sign tags with GPG if you have a private key by using `-s`. To verify a signed tag with GPG, use `-v`. You must have the signer's public key in your keyring for this to work. You can add tags later if you forget by adding the checksum (or part of it) to the end of the command. To push tags to remote servers you can run `git push [remote-name] [tagname]` or to push all tags that aren't already on the remote server you can do `--tags` instead. To delete a tag locally use `-d`. To delete a tag after it has been pushed `git push --delete origin [tagname]`.
+
+```
+git tag
+git tag -l 'v1.4.2.*'
+git tag -a v0.1 -m 'Alpha Version 0.1 or whatever message you want in here.'
+git show v0.1
+git tag -v [tag-name]
+git tag -a v0.1 -m 'Alpha Version 0.1 or whatever message you want in here.' [checksum]
+git push [remote-name] [tagname]
+git push [remote-name] --tags
+git tag -d [tagname]
+git push --delete origin [tagname]
+```
+
+You can also create a lightweight tag. This is just the commit checksum stored in a file, it saves no other information and for this reason is somewhat not recommended. A `git show` will only show the commit data since there is no tag data. To create a lightweight tag just don't apply `-a`, `-s`, or `-m`.
+
+```
+git tag v0.1
+```
+
+## git show [Documentation](http://git-scm.com/docs/git-show "Git Show Documentation")
+
+`git show` can be used to see tag data with the commit data the tag was used on.
+
+```
+git show v0.1
+```
+
