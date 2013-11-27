@@ -1,6 +1,8 @@
 # Git Commands Reference
 
 [Git Documentation](http://git-scm.com/docs "Git Documentation")
+[Git Immersion](http://gitimmersion.com/index.html "Git Tutorial") is a great easy Git tutorial to get started with Git.
+[My Git Aliases](https://github.com/lkosch/learning-git/master/README.md#my-git-aliases-documentation "My Git Aliases") to keep track of my own aliases.
 
 My own notes while taking the journey of learning Git. Makes reading through all of this a little more fun. =)
 
@@ -31,6 +33,16 @@ git config --global user.email "somename@whatever.com"
 git config --global core.editor [editor or the path for the editor]
 git config --global web.browser firefox
 git config --list
+```
+
+This can also be used to make aliases. Using `alias.[name]` you can either set up short hand for existing command or make new commands that you want.
+
+```
+git config --global alias.unstage 'reset HEAD --'
+This makes git unstage fileA the same as git reset HEAD fileA
+
+git config --global alias.last 'log -1 HEAD'
+This makes git last the same as git log -1 HEAD
 ```
 
 ## git init [Documentation](http://git-scm.com/docs/git-init "Git Init Documentation")
@@ -126,9 +138,10 @@ git rm notes/\*.md
 
 ## git mv [Documentation](http://git-scm.com/docs/git-mv "Git mv Documentation")
 
-This is the shorthand for renaming a file using Git. Run this and Git will stage the rename for you.
+This is the shorthand that can be used to move a file in Git. This is also the shorthand for renaming a file using Git. Run this and Git will stage the rename for you.
 
 ```
+git mv [file] [path]
 git mv [old_file_name] [new_file_name]
 ```
 
@@ -205,10 +218,11 @@ gitk
 
 ## git reset [Documentation](http://git-scm.com/docs/git-reset "Git Reset Documentation")
 
-To unstage a file use `git reset HEAD [file]`.
+To unstage a file use `git reset HEAD [file]`. Using `git reset --hard [hash/tag]` will reset the branch to the given commit and the `--hard` is so that the working directory is updated to be consistent with the new branch head. Using this wont erase the other commits and can be seen with the `git log --all` command and referenced to by their tags or hashes.
 
 ```
 git reset HEAD README.md
+git reset --hard [hash/tag]
 ```
 
 ## git checkout [Documentation](http://git-scm.com/docs/git-checkout "Git Checkout Documentation")
@@ -278,3 +292,36 @@ git tag v0.1
 git show v0.1
 ```
 
+## git revert
+
+`git revert` can be used to undo a commit. If your on the HEAD you can just use HEAD as the argument to undo the last commit. You can revert any commit using that commits hash. You can edit the commit messaged or use `--no-edit` to skip that and the revert as well as the original commit will be be shown in `git log`.
+
+```
+git revert HEAD --no-edit
+git revert [hash]
+```
+
+## My Git Aliases [Quick Explanation of Aliases](http://git-scm.com/book/en/Git-Basics-Tips-and-Tricks "Quick Explanation of Aliases")
+
+List of Git aliases that I use.
+
+```
+git config --global alias.unstage 'reset HEAD --'
+This makes git unstage fileA the same as git reset HEAD fileA.
+
+git config --global alias.last 'log -1 HEAD'
+This makes git last the same as git log -1 HEAD.
+
+git config --global alias.ls 'ls-files'
+Displays a list of files if they have at least been staged.
+
+git config --global alias.ign 'ls-files -o -i --exclude-standard'
+Displays a list of ignored files.
+
+git config --global alias.lol 'log --graph --decorate --pretty=oneline --abbrev-commit'
+git config --global alias.lola 'log --graph --decorate --pretty=oneline --abbrev-commit --all'
+git config --global alias.hist 'log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short'
+
+git config --global alias.type 'cat-file -t'
+git config --global alias.dump 'cat-file -p'
+```
