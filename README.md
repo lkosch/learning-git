@@ -63,7 +63,7 @@ git clone [url] [name]
 
 ## git status [Documentation](http://git-scm.com/docs/git-status "Git Status Documentation")
 
-Tells you what branch you are on. Gives a general overview of untracked files, files that haven't been staged, and files that are staged and ready for commit. Files can show up in the Changes to be commited and the Changes not staged for commit if the file has been modified since the last time it was staged.
+Tells you what branch you are on. Gives a general overview of untracked files, files that haven't been staged, and files that are staged and ready for commit. Files can show up in the Changes to be commited and the Changes not staged for commit if the file has been modified since the last time it was staged. This can also be used to show unmerged files if there has been a merge conflict.
 
 ```
 git status
@@ -227,10 +227,12 @@ git reset --hard [hash/tag]
 
 ## git checkout [Documentation](http://git-scm.com/docs/git-checkout "Git Checkout Documentation")
 
-If you want to overwrite a modified file with say a last commited version you can use `git checkout`. Any uncommited changes will be lost forever you use this command. This overwrites the file with the one you are checking out. If misused you could lose data that you can not recover.
+If you want to overwrite a modified file with say a last commited version you can use `git checkout`. Any uncommited changes will be lost forever you use this command. This overwrites the file with the one you are checking out. If misused you could lose data that you can not recover. Using this with a branch name switches HEAD to point to that branch and work from that branches last commit. Adding `-b` will create a new branch with the given name and switch to that branch.
 
 ```
 git checkout -- README.md
+git checkout [branch]
+git checkout -b [branch]
 ```
 
 ## git remote [Documentation](http://git-scm.com/docs/git-remote "Git Remote Documentation")
@@ -299,6 +301,27 @@ git show v0.1
 ```
 git revert HEAD --no-edit
 git revert [hash]
+```
+
+## git branch [Documentation](http://git-scm.com/docs/git-branch "Git Branch Documentation")
+
+`git branch` by itself will produce a list of branches. Adding `-v` will show the last commit for each branch. Using `--merged` and `--no-merged` shows the branches that have been merged or not merged into the current checked out branch. `git branch` will make a new branch starting at the commit that HEAD is pointing to with whatever name you pass to it. This does not switch HEAD to point at the new branch though, use `git checkout [branch]` to change where HEAD is pointing. Adding `-b` to `git checkout [branch]` will create a new branch with the given name and switch to that branch. Adding `-d` to `git branch [name]` will delete a branch.
+
+```
+git branch
+git branch -v
+git branch --merged
+git branch [name]
+git checkout -b [branch]
+git branch -d [name]
+```
+
+## git merge [Documentation](http://git-scm.com/docs/git-merge "Git Merge Documentation")
+
+This will merge the branch you name with the branch you are currently checked out to, so whatever branch that HEAD is pointing to. If you see "Fast forward" after running the merge then the branch you merged in was directly upstream and Git will just move the pointer forward to the new commit. If the commit on the branch isn't a direct ancestorof the branch it's merging into then Git does a three-way merge using the common ancestor of the two branches, the snapshot to merge into, and the snapshot to merge in. This creates a new snapshot and a new commit that points to this snapshot which is called a merge commit and it has more than one parent. [Branching and Merging Explained](http://git-scm.com/book/en/Git-Branching-Basic-Branching-and-Merging "Merge Explained"), for an easy to understand explanation and visuals.
+
+```
+git merge [branch]
 ```
 
 ## My Git Aliases [Quick Explanation of Aliases](http://git-scm.com/book/en/Git-Basics-Tips-and-Tricks "Quick Explanation of Aliases")
